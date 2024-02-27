@@ -1,0 +1,2 @@
+# BettingBot
+Sports betting bot
