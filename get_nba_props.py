@@ -31,7 +31,8 @@ def get_props(game_id):
     # for game_prop in game_props["markets"]:
     #     print("prop: ", game_prop["name"])
     # https://api.prop-odds.com/beta/odds/ee5c9178cf8d6f4d7bc81897a76b542d/player_first_goal?api_key=TpGZ71Ti8KQagTLtyUh2YVKV6WQCucXq7a9CX5zmH8
-    player_ous = {}
+    player_overs = {}
+    player_unders = {}
     specific_url = f"{BASE_URL}/odds/{game_id}/{specific_prop}?api_key={API_KEY}"
     specific_response = requests.get(specific_url)
     odds = specific_response.json()
@@ -40,20 +41,23 @@ def get_props(game_id):
         bet_odds = item["odds"]  # Get handicap value
         if 'over' in item['name'].lower():
             bet_type = 'over'
-            player_name = item['name'].lower().split(' over ')[0]
-            bet_value = item['name'].lower().split(' over ')[-1]
+            player_name = item['name'].split(' Over ')[0]
+            bet_value = item['name'].split(' Over ')[-1]
         else:
             bet_type = 'under'
-            player_name = item['name'].lower().split(' under ')[0]
-            bet_value = item['name'].lower().split(' under ')[-1]
+            player_name = item['name'].split(' Under ')[0]
+            bet_value = item['name'].split(' Under ')[-1]
         
-        player_bet_info = [bet_type, bet_value, bet_odds]
-        if not (player_name.split()[-1] == "over" or player_name.split()[-1] == "under"):
-            if player_name not in player_ous:
-                player_ous[player_name] = player_bet_info
-    for key in player_ous.keys():
-        print(key, player_ous[key])
-    # print(player_ous)
+        if not (player_name.split()[-1] == "Over") and bet_type == "over":
+            if player_name not in player_overs:
+                player_overs[player_name] = [bet_type, float(bet_value), bet_odds]
+        if not (player_name.split()[-1] == "Under") and bet_type == "under":
+            if player_name not in player_unders:
+                player_unders[player_name] = [bet_type, float(bet_value), bet_odds]
+
+    for key in player_overs.keys():
+        print(key, player_overs[key])
+        print(key, player_unders[key])
 def main():
     get_daily_games()
 
