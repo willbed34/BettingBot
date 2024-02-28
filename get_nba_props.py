@@ -38,19 +38,22 @@ def get_props(game_id):
     for item in odds["sportsbooks"][0]["market"]["outcomes"]:
         #we want player, if its over/under, value, odds
         bet_odds = item["odds"]  # Get handicap value
-        #only do overs
         if 'over' in item['name'].lower():
             bet_type = 'over'
             player_name = item['name'].lower().split(' over ')[0]
             bet_value = item['name'].lower().split(' over ')[-1]
         else:
-            continue
+            bet_type = 'under'
+            player_name = item['name'].lower().split(' under ')[0]
+            bet_value = item['name'].lower().split(' under ')[-1]
+        
         player_bet_info = [bet_type, bet_value, bet_odds]
-        if player_name.split()[-1] != "over":
+        if not (player_name.split()[-1] == "over" or player_name.split()[-1] == "under"):
             if player_name not in player_ous:
                 player_ous[player_name] = player_bet_info
     for key in player_ous.keys():
         print(key, player_ous[key])
+    # print(player_ous)
 def main():
     get_daily_games()
 
