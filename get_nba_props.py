@@ -12,10 +12,21 @@ def get_daily_games():
     url = f"{BASE_URL}/games/{LEAGUE}?date={current_date}&tz=America/New_York&api_key={API_KEY}"
     response = requests.get(url)
     daily_games = response.json()["games"]
-    for daily_game in daily_games:
-        print("Getting props for", daily_game["home_team"], "vs.", daily_game["away_team"])
-        get_props(daily_game["game_id"])
-        break;
+    
+    print("Available games for today:")
+    for i, daily_game in enumerate(daily_games, 1):
+        print(f"{i}. {daily_game['home_team']} vs. {daily_game['away_team']}")
+    
+    selected_game_index = int(input("Enter the number of the game you want to select: ")) - 1
+    
+    selected_game = daily_games[selected_game_index]
+
+    print("Getting props for", selected_game["home_team"], "vs.", selected_game["away_team"])
+
+    return selected_game["game_id"]
+    
+    
+    
 
 
 def get_props(game_id):
@@ -23,7 +34,7 @@ def get_props(game_id):
     #https://api.prop-odds.com/beta/markets/562e11a59b19631a0e96a18894e4985c/?/api_key=TpGZ71Ti8KQagTLtyUh2YVKV6WQCucXq7a9CX5zmH8
     #https://api.prop-odds.com/beta/markets/ee5c9178cf8d6f4d7bc81897a76b542d?api_key=TpGZ71Ti8KQagTLtyUh2YVKV6WQCucXq7a9CX5zmH8
 
-    print(url)
+    # print(url)
     response = requests.get(url)
     game_props = response.json()
     # print("prop: ", game_props["markets"][0]["name"])
@@ -55,12 +66,13 @@ def get_props(game_id):
             if player_name not in player_unders:
                 player_unders[player_name] = [bet_type, float(bet_value), bet_odds]
 
-    for key in player_overs.keys():
-        print(key, player_overs[key])
-        print(key, player_unders[key])
+    # for key in player_overs.keys():
+    #     print(key, player_overs[key])
+    #     print(key, player_unders[key])
+    return player_overs, player_unders
 def main():
-    get_daily_games()
-
+    selected_game_id = get_daily_games()
+    return get_props(selected_game_id)
 
 if __name__ == '__main__':
     main()
