@@ -5,6 +5,8 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from nba_api.stats.static import players
 from nba_api.stats.static import teams 
+from nba_api.stats.endpoints import playergamelog
+from nba_api.stats.library.parameters import SeasonAll
 
 # Load teams file
 # teams = json.loads(requests.get('https://raw.githubusercontent.com/bttmly/nba/master/data/teams.json').text)
@@ -21,12 +23,13 @@ def get_team_id(team_name):
 def get_player_id(player_name):
     try:
         player_dict = players.get_players()
+        # 'id', 'full_name', 'first_name', 'last_name', 'is_active'
         player_id = [player for player in player_dict if player['full_name'] == player_name][0]["id"]
         return player_id
     except:
         return -1
 
-def get_player_stats(player_name, season):
+def get_player_season_stats(player_name, season):
     player_id = get_player_id(player_name)
     if player_id == -1:
         return -1
@@ -48,16 +51,30 @@ def get_player_stats(player_name, season):
         "RPG": data.loc[0, 'REB'] / data.loc[0, 'GP'],  # Rebounds per game
         "FG%": data.loc[0, 'FG_PCT'],  # Field goal percentage
         "3P%": data.loc[0, 'FG3_PCT'],  # Three-point percentage
-
+        "SPG": data.loc[0, 'STL'] / data.loc[0, 'GP'],  # Steals per game
+        "BPG": data.loc[0, 'BLK'] / data.loc[0, 'GP'],  # Blocks per game
+        "DRPG": data.loc[0, 'DREB'] / data.loc[0, 'GP'],  # Defensive rebounds per game
     }
 
     return stats
+
+def get_player_gamelogs(player_name):
+    player_id = get_player_id(player_name)
+    if player_id == -1:
+        return -1
+    gamelog = pd.concat(playergamelog.PlayerGameLog(player_id=player_id, season=SeasonAll.all).get_data_frames())
+    gamelog["GAME_DATE"] = pd.to_datetime(gamelog["GAME_DATE"], format="%b %d, %Y")
+    gamelog = gamelog.query("GAME_DATE.dt.year in [2021, 2022, 2023]")
+    print(gamelog)
+    #do db stuff here, so we don't repetitively add gamelog to database
+    
 
 
 def main(player_name):
     current_season = '2023-24'  # Adjust this as needed for the current season
 
-    player_stats = get_player_stats(player_name, current_season)
+    player_stats = get_player_season_stats(player_name, current_season)
+    get_player_gamelogs(player_name)
     return player_stats
 
 
