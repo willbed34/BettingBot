@@ -23,13 +23,13 @@ def get_daily_games():
 
     print("Getting props for", selected_game["home_team"], "vs.", selected_game["away_team"])
 
-    return selected_game["game_id"]
+    return selected_game["game_id"], selected_game["home_team"], selected_game["away_team"]
     
     
     
 
 
-def get_props(game_id):
+def get_props(game_id, home_team, away_team):
     url = f"{BASE_URL}/markets/{game_id}?api_key={API_KEY}"
     #https://api.prop-odds.com/beta/markets/562e11a59b19631a0e96a18894e4985c/?/api_key=TpGZ71Ti8KQagTLtyUh2YVKV6WQCucXq7a9CX5zmH8
     #https://api.prop-odds.com/beta/markets/ee5c9178cf8d6f4d7bc81897a76b542d?api_key=TpGZ71Ti8KQagTLtyUh2YVKV6WQCucXq7a9CX5zmH8
@@ -61,18 +61,18 @@ def get_props(game_id):
         
         if not (player_name.split()[-1] == "Over") and bet_type == "over":
             if player_name not in player_overs:
-                player_overs[player_name] = [bet_type, float(bet_value), bet_odds]
+                player_overs[player_name] = [bet_type, float(bet_value), bet_odds, home_team, away_team]
         if not (player_name.split()[-1] == "Under") and bet_type == "under":
             if player_name not in player_unders:
-                player_unders[player_name] = [bet_type, float(bet_value), bet_odds]
+                player_unders[player_name] = [bet_type, float(bet_value), bet_odds, home_team, away_team]
 
     # for key in player_overs.keys():
     #     print(key, player_overs[key])
     #     print(key, player_unders[key])
     return player_overs, player_unders
 def main():
-    selected_game_id = get_daily_games()
-    return get_props(selected_game_id)
+    selected_game_id, home_team, away_team = get_daily_games()
+    return get_props(selected_game_id, home_team, away_team)
 
 if __name__ == '__main__':
     main()

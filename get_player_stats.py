@@ -19,12 +19,17 @@ def get_team_id(team_name):
 
 # Get player ID based on player name
 def get_player_id(player_name):
-    player_dict = players.get_players()
-    player_id = [player for player in player_dict if player['full_name'] == player_name][0]["id"]
-    return player_id
+    try:
+        player_dict = players.get_players()
+        player_id = [player for player in player_dict if player['full_name'] == player_name][0]["id"]
+        return player_id
+    except:
+        return -1
 
 def get_player_stats(player_name, season):
     player_id = get_player_id(player_name)
+    if player_id == -1:
+        return -1
     
     # Create JSON request
     player_dashboard = playerdashboardbyyearoveryear.PlayerDashboardByYearOverYear(
@@ -43,7 +48,7 @@ def get_player_stats(player_name, season):
         "RPG": data.loc[0, 'REB'] / data.loc[0, 'GP'],  # Rebounds per game
         "FG%": data.loc[0, 'FG_PCT'],  # Field goal percentage
         "3P%": data.loc[0, 'FG3_PCT'],  # Three-point percentage
-        
+
     }
 
     return stats
@@ -53,12 +58,8 @@ def main(player_name):
     current_season = '2023-24'  # Adjust this as needed for the current season
 
     player_stats = get_player_stats(player_name, current_season)
+    return player_stats
 
-    print(f"Player Stats for {player_name} ({current_season}):")
-    print(f"PPG: {player_stats['PPG']:.2f}")
-    print(f"RPG: {player_stats['RPG']:.2f}")
-    print(f"FG%: {player_stats['FG%']:.2f}")
-    print(f"3P%: {player_stats['3P%']:.2f}")
 
 
 
