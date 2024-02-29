@@ -9,6 +9,8 @@ API_KEY = 'TpGZ71Ti8KQagTLtyUh2YVKV6WQCucXq7a9CX5zmH8'
 
 def get_daily_games():
     current_date = datetime.now().strftime('%Y-%m-%d')
+    #TODO: REMOVE ONCE READY FOR PRODUCTION, HARDCODING SO WE CAN TEST W/O WAITING FOR LINES
+    current_date = "2024-02-28"
     url = f"{BASE_URL}/games/{LEAGUE}?date={current_date}&tz=America/New_York&api_key={API_KEY}"
     response = requests.get(url)
     daily_games = response.json()["games"]
@@ -34,7 +36,7 @@ def get_props(game_id, home_team, away_team):
     #https://api.prop-odds.com/beta/markets/562e11a59b19631a0e96a18894e4985c/?/api_key=TpGZ71Ti8KQagTLtyUh2YVKV6WQCucXq7a9CX5zmH8
     #https://api.prop-odds.com/beta/markets/ee5c9178cf8d6f4d7bc81897a76b542d?api_key=TpGZ71Ti8KQagTLtyUh2YVKV6WQCucXq7a9CX5zmH8
 
-    # print(url)
+    print(url)
     response = requests.get(url)
     game_props = response.json()
     # print("prop: ", game_props["markets"][0]["name"])
@@ -47,6 +49,7 @@ def get_props(game_id, home_team, away_team):
     specific_url = f"{BASE_URL}/odds/{game_id}/{specific_prop}?api_key={API_KEY}"
     specific_response = requests.get(specific_url)
     odds = specific_response.json()
+    print("keys: ", odds.keys())
     for item in odds["sportsbooks"][0]["market"]["outcomes"]:
         #we want player, if its over/under, value, odds
         bet_odds = item["odds"]  # Get handicap value
