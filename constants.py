@@ -1,1 +1,2 @@
+STAT_KEYS = ["PPG", "RPG", "FGPCT", "THREEPCT", "SPG", "BPG", "DRPG"]
 TEAM_NAMES = []
