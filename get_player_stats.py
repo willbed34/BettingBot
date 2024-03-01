@@ -126,7 +126,7 @@ def put_players_in_database():
         if is_active:
             print(i, " getting: ", player_name)
             player_stats = get_player_season_stats(cur_id, current_season)
-            print(player_stats)
+            # print(player_stats)
             if player_stats == -1:
                 print(f"No stats for {player_name}")
                 continue
@@ -137,34 +137,7 @@ def put_players_in_database():
             i += 1
     conn.commit()
 
-
-        
-        
-
-
-
-
 if __name__ == "__main__":
     # player_stats = get_player_season_stats(2544, '2023-24')
     # print(player_stats)
     put_players_in_database()
-
-
-# def get_stats(player_name, team_name):
-#     player_name = player_name.lower().strip().replace(" ", "-")
-#     team_name = team_name.lower().strip().replace(" ", "-")
-#     url = f"https://www.nba.com/{team_name}/{player_name}"
-#     print(url)
-#     # url = "https://www.nba.com/sixers/joel-embiid"
-#     response = requests.get(url)
-#     print(response.status_code)
-#     player_page = BeautifulSoup(response.content, 'html.parser')
-
-#     stat_ids = ["pointsPerGame", "assistsPerGame", "stealsPerGame", "reboundsPerGame"]
-#     for stat_id in stat_ids:
-#         current_stat = player_page.find('p', id=stat_id)
-#         print(stat_id, ": ",current_stat)
-#     # stat_names = player_page.find_all("p", class_ = "stats-number")
-#     # for stat_name in stat_names:
-#     #     print("hey")
-#     #     print(stat_name.text)
