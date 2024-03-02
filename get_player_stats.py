@@ -66,14 +66,24 @@ def get_player_season_stats(player_id, season):
     return stats
 
 def get_player_gamelogs(player_id):
+    #returns player gamelog. can be filtered after based on home games, vs a certain team, etc
     
-    gamelog = pd.concat(playergamelog.PlayerGameLog(player_id=player_id, season=SeasonAll.all).get_data_frames())
-    gamelog["GAME_DATE"] = pd.to_datetime(gamelog["GAME_DATE"], format="%b %d, %Y")
-    gamelog = gamelog.query("GAME_DATE.dt.year in [2021, 2022, 2023, 2024]")
-    print(gamelog)
+    gamelog_df = pd.concat(playergamelog.PlayerGameLog(player_id=player_id, season=SeasonAll.all).get_data_frames())
+    # gamelog["GAME_DATE"] = pd.to_datetime(gamelog["GAME_DATE"], format="%b %d, %Y")
+    # gamelog = gamelog.query("GAME_DATE.dt.year in [2021, 2022, 2023, 2024]")
+    #get stats only against certain team
+    # print(gamelog_df.columns)
+    return gamelog_df
     #do db stuff here, so we don't repetitively add gamelog to database
     #get headers
     #actually put season stats in database
+
+def get_games_vs_specific_team(gamelog_df, team_abv):
+    print(gamelog_df.columns)
+    was_games_df = gamelog_df[gamelog_df["MATCHUP"].str.contains(team_abv)]
+    return was_games_df
+
+
 
 
 
@@ -85,7 +95,6 @@ def main(player_name):
 
     
     player_stats = get_player_season_stats(player_id, current_season)
-    get_player_gamelogs(player_id)
     return player_stats
 
 def put_players_in_database():
@@ -140,4 +149,7 @@ def put_players_in_database():
 if __name__ == "__main__":
     # player_stats = get_player_season_stats(2544, '2023-24')
     # print(player_stats)
-    put_players_in_database()
+    # put_players_in_database()
+    lebron_gamelog = get_player_gamelogs(2544)
+    lebron_vs_was = get_games_vs_specific_team(lebron_gamelog, "WAS")
+    print(lebron_vs_was)
